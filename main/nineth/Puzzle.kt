@@ -47,16 +47,41 @@ class Puzzle {
             val e = wall.first
             val f = wall.second
             if (
-                intersect(a, b, e, f)
-                || intersect(a, c, e, f)
-                || intersect(c, d, e, f)
-                || intersect(b, d, e, f)
+                strictIntersect(a, b, e, f)
+                || strictIntersect(a, c, e, f)
+                || strictIntersect(c, d, e, f)
+                || strictIntersect(b, d, e, f)
             ) {
                 return false
             }
         }
         return true
     }
+
+    // 2439897250
+    fun strictIntersect(
+        a: Pair<Long, Long>,
+        b: Pair<Long, Long>,
+        c: Pair<Long, Long>,
+        d: Pair<Long, Long>
+    ): Boolean {
+        // Helper: computes the orientation of triplet (p,q,r)
+        fun orientation(p: Pair<Long, Long>, q: Pair<Long, Long>, r: Pair<Long, Long>): Int {
+            val value = (q.second - p.second) * (r.first - q.first) - (q.first - p.first) * (r.second - q.second)
+            return when {
+                value > 0 -> 1   // Clockwise
+                value < 0 -> -1  // Counterclockwise
+                else -> 0        // Colinear
+            }
+        }
+        val o1 = orientation(a, b, c)
+        val o2 = orientation(a, b, d)
+        val o3 = orientation(c, d, a)
+        val o4 = orientation(c, d, b)
+        // Only return true when all orientations are strictly non-zero and different
+        return o1 != o2 && o3 != o4 && o1 != 0 && o2 != 0 && o3 != 0 && o4 != 0
+    }
+
 
     //2439897250
     fun intersect2(a: Pair<Long, Long>, b: Pair<Long, Long>, c: Pair<Long, Long>, d: Pair<Long, Long>): Boolean {
